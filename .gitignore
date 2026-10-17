@@ -1,0 +1,19 @@
+# Keep all incident materials outside version control.
+/work/
+/private-inputs/
+*.log
+*.json
+*.jsonl
+*.tar
+*.tar.gz
+*.tgz
+*.zip
+*.gz
+*.map.*
+/case.md
+/AI_CONTEXT.md
+__pycache__/
+*.py[cod]
+.venv/
+.DS_Store
+Thumbs.db

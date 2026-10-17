@@ -1,0 +1,3 @@
+(EngineCore_DP0 pid=1002) DEBUG 10-17 12:00:02 [mooncake_connector.py:2033] req_id=cmpl-demo-normal-D transfer_id=xfer-demo-normal
+(EngineCore_DP0 pid=1002) DEBUG 10-17 12:00:03 [mooncake_connector.py:1824] req_id=cmpl-demo-fault-D transfer_id=xfer-demo-fault
+(EngineCore_DP0 pid=1002) ERROR 10-17 12:01:08 [mooncake_connector.py:1855] MooncakeXferMetadata transfer failed for {'cmpl-demo-fault-D'}: Resource temporarily unavailable
