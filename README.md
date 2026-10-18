@@ -94,4 +94,4 @@ python3 -m unittest test_mc_diag -v
 
 ## 同事如何获取
 
-仓库为私有，需要仓库访问权限后才能 clone 或下载 ZIP。暂时没有 GitHub 权限时，可从仓库下载后通过团队内部渠道发送 `mc_diag.py`、本说明和 `case-template.md`；运行仍不需要 GitHub 账号。
+仓库已公开，无需 GitHub 账号或额外授权即可 clone 或下载 ZIP。也可以通过团队内部渠道发送 `mc_diag.py`、本说明和 `case-template.md`；运行不需要 GitHub 账号。
