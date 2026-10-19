@@ -1,4 +1,20 @@
-# 使用参考（0.2.3）
+# 使用参考（0.2.4）
+
+## 旧版 D 端失败语义
+
+以下说明只针对 [vLLM fd5d3aea 的 MooncakeConnector](https://github.com/vllm-project/vllm/blob/fd5d3aea/vllm/distributed/kv_transfer/kv_connector/v1/mooncake/mooncake_connector.py)，不能根据相似报错套用到其他版本：
+
+| 源码行 | 特征 | 该版本的行为 |
+| --- | --- | --- |
+| L1842 | `Error happens during transferring kvcache for` | P 返回 ERROR，D 只记录失败，不向调度器报告加载失败 |
+| L1855 | `MooncakeXferMetadata transfer failed for` | 接收异常后只记录失败，不向调度器报告加载失败 |
+| L1958 | `Failed to find remote engine_id` | bootstrap 查不到远端 engine_id 后直接返回 |
+
+L1842、L1958 是 `logger.error` 调用起始行；原文字面量分别在 L1843、L1959，规则源码索引使用字面量所在行，确保逐行自检可核对。
+
+L1842、L1855 这两个路径在这个版本里不会结束请求，会一直挂到客户端超时；客户端超时／取消不能当作框架已经正确处理失败。问题在 [vLLM #50984](https://github.com/vllm-project/vllm/pull/50984) 修复（合入提交 `2c7ee87223f0c94f614a0b8600f6f193e6e4388f`），修复后将失败通知调度器，由失败策略处理。
+
+在 L1855 对应的 ZMQ 接收路径，`Resource temporarily unavailable` 表示 P 在 `(VLLM_MOONCAKE_ABORT_REQUEST_TIMEOUT+60)` 秒内没有回复；接收超时在 L1833–L1835 设置。它不单独证明 P 进程退出、RNIC 故障或某个传输层根因。客户端自身超时另有独立配置。该解释不推广到任意模块中的 EAGAIN。
 
 ## 采集什么
 

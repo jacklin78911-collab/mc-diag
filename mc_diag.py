@@ -30,11 +30,11 @@ from collections import Counter, OrderedDict, defaultdict
 from dataclasses import dataclass, field
 from typing import Dict, Iterable, List, Optional, Tuple
 
-TOOL_VERSION = "0.2.3"
+TOOL_VERSION = "0.2.4"
 # 规则与 TENT/经典 TE 源文件表所依据的上游版本。日志文本变了要同步更新。
 RULES_BASIS = {
     "mooncake": "kvcache-ai/Mooncake@1d97a1d (2026-10-15)",
-    "vllm": "vllm-project/vllm@e8e1e961；旧版控制元数据错误 @fd5d3aea",
+    "vllm": "vllm-project/vllm@e8e1e961；旧版 D 端失败路径 @fd5d3aea",
 }
 RELEASE_PROFILES = {
     "0.3.13.post1": "71973589",
@@ -215,6 +215,16 @@ RULES: List[Rule] = [
         r"remote engine_id \S+ not found from bootstrap",
     ),
     R(
+        "vllm.legacy_engine_id_not_found",
+        "bootstrap",
+        "error",
+        "Failed to find remote engine_id",
+        "vllm",
+        VLLM_CONN,
+        "vLLM fd5d3aea:L1958：D 端从 bootstrap 查不到远端 engine_id，直接返回；"
+        "该旧版未向调度器报告加载失败，不能当作请求已经结束",
+    ),
+    R(
         "vllm.invalid_params",
         "config",
         "error",
@@ -341,7 +351,20 @@ RULES: List[Rule] = [
         "MooncakeXferMetadata transfer failed for",
         "vllm",
         VLLM_CONN,
-        "D 端交换 KV 传输控制元数据失败；不据此判断数据通路或请求最终状态",
+        "vLLM fd5d3aea:L1855：D 端交换 KV 传输控制元数据失败。这个版本里请求不会由此结束，"
+        "会一直挂到客户端超时；问题在 vLLM #50984 修复，不能套用到包含修复的版本。"
+        "该接收路径的 Resource temporarily unavailable 表示 P 在 "
+        "(VLLM_MOONCAKE_ABORT_REQUEST_TIMEOUT+60) 秒内没有回复，不证明 P 进程已退出",
+    ),
+    R(
+        "vllm.legacy_transfer_response_error",
+        "transfer",
+        "error",
+        "Error happens during transferring kvcache for",
+        "vllm",
+        VLLM_CONN,
+        "vLLM fd5d3aea:L1842：P 返回 KV 传输错误，D 端只记录失败。这个版本里请求不会由此结束，"
+        "会一直挂到客户端超时；问题在 vLLM #50984 修复，不能套用到包含修复的版本",
     ),
     R(
         "vllm.d_pull_failed_engine",
@@ -691,6 +714,7 @@ RULE_SOURCE_LINES = {
     "vllm.bootstrap_query_retry": {"e8e1e961": [2558]},
     "vllm.bootstrap_connect_failed": {"e8e1e961": [2582]},
     "vllm.engine_id_not_found": {"e8e1e961": [2642]},
+    "vllm.legacy_engine_id_not_found": {"fd5d3aea": [1959]},
     "vllm.invalid_params": {"e8e1e961": [1105]},
     "vllm.missing_transfer_id": {"e8e1e961": [1115]},
     "vllm.tp_not_paired": {"e8e1e961": [1555]},
@@ -706,6 +730,7 @@ RULE_SOURCE_LINES = {
     "vllm.p_send_failed": {"e8e1e961": [2030, 2034]},
     "vllm.d_pull_failed_engine": {"e8e1e961": [2504, 2535]},
     "vllm.d_metadata_transfer_failed": {"fd5d3aea": [1855]},
+    "vllm.legacy_transfer_response_error": {"fd5d3aea": [1843]},
     "vllm.d_pull_failed": {"e8e1e961": [2504, 2535]},
     "vllm.protocol": {"e8e1e961": [1247]},
     "mc.protocol_not_built": {

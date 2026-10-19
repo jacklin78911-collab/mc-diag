@@ -244,6 +244,34 @@ class RedactorTest(unittest.TestCase):
 
 
 class TriageTest(unittest.TestCase):
+    def test_legacy_decode_failure_rules_keep_original_lines_and_version(self):
+        cases = [
+            (
+                "vllm.legacy_transfer_response_error",
+                1843,
+                "Error happens during transferring kvcache for {'cmpl-test'}: test failure",
+            ),
+            (
+                "vllm.legacy_engine_id_not_found",
+                1959,
+                "Failed to find remote engine_id test-engine from bootstrap server test-bootstrap",
+            ),
+        ]
+        with tempfile.TemporaryDirectory() as temp:
+            path = os.path.join(temp, "d.log")
+            write(
+                path, [vlog("ERROR", message, line=line) for _, line, message in cases]
+            )
+            scan = m.scan_file(path, "decode", 0)
+            for lineno, (rule_id, source_line, _) in enumerate(cases, 1):
+                self.assertEqual(scan.rule_counts[rule_id], 1)
+                self.assertEqual(scan.first_hits[rule_id].lineno, lineno)
+                rule = m.RULE_BY_ID[rule_id]
+                self.assertIn("fd5d3aea", rule.note)
+                self.assertEqual(m.rule_source(rule)["revision"], "fd5d3aea")
+                self.assertEqual(m.rule_source(rule)["lines"], [source_line])
+                self.assertEqual(rule.kind, "error")
+
     def test_real_legacy_decode_metadata_failure_has_its_own_source(self):
         with tempfile.TemporaryDirectory() as temp:
             path = os.path.join(temp, "d.log")
