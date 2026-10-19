@@ -4,6 +4,36 @@
 
 **Python 3.9+，只用标准库，无需安装依赖。** 环境快照在服务所在的 Linux 上采集；打包机器不需要 GPU、Mooncake 或 vLLM。工具不自动调用 AI 或上传数据。
 
+## 让 AI 按 skill 使用
+
+仓库根目录的 [SKILL.md](SKILL.md) 定义了采集、排查记录、打包和证据核对流程，直接调用同目录的 `mc_diag.py`，无需另外安装一份工具。
+
+Codex 本地安装（Linux／macOS／WSL）：
+
+```bash
+mkdir -p "$HOME/.agents/skills"
+git clone https://github.com/jacklin78911-collab/mc-diag.git "$HOME/.agents/skills/mc-diag"
+```
+
+Windows PowerShell：
+
+```powershell
+New-Item -ItemType Directory -Force -Path "$HOME/.agents/skills" | Out-Null
+git clone https://github.com/jacklin78911-collab/mc-diag.git "$HOME/.agents/skills/mc-diag"
+```
+
+已有同名目录不要覆盖；此前已按上述方式 clone 的可在该目录执行 `git pull --ff-only`。也可下载 ZIP，将含 `SKILL.md`、`mc_diag.py` 和相关文件的完整仓库目录放到该位置。仅下载仓库到普通目录不会自动注册为 skill。
+
+按 [OpenAI 官方说明](https://learn.chatgpt.com/docs/build-skills)，Codex 从 `~/.agents/skills` 发现用户 skill；未显示时重启 Codex。安装后可以这样说：
+
+> 用 $mc-diag 整理这次 Mooncake 故障。P/D 日志在……，服务 PID 是……。请记录故障背景和已做排查，生成脱敏上下文包，核对失败请求的证据并列出材料缺口。
+
+只有已有包时：
+
+> 用 $mc-diag 分析这个故障包，先核对引用，区分日志事实、操作记录和推测，再给出下一步最小检查。
+
+现场采集需要 AI 所在环境具有对应机器／容器的访问能力；仅安装 skill 不会获得远程权限。实际故障材料保存在本地工作区，勿写入安装目录。暂不提供其他 AI 客户端的专用安装适配；没有 skill 的环境仍可照下面步骤使用脚本。
+
 ## 先试一遍（不需要 GPU）
 
 下载本仓库 ZIP 后解压，或：

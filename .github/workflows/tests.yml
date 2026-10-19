@@ -17,8 +17,14 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: python -m unittest test_mc_diag -v
-      - name: Try documented example
+      - name: Try installed skill from another directory
         run: |
-          mkdir -p work
-          python mc_diag.py bundle --no-local-snapshot --case examples/case.md --prefill-log examples/prefill.txt --decode-log examples/decode.txt -o work/demo.tar.gz
-          tar -tzf work/demo.tar.gz
+          skill_dir="$RUNNER_TEMP/skill install/mc-diag"
+          case_dir="$RUNNER_TEMP/incident"
+          mkdir -p "$skill_dir" "$case_dir"
+          git archive HEAD | tar -x -C "$skill_dir"
+          cd "$case_dir"
+          python "$skill_dir/mc_diag.py" --version
+          python "$skill_dir/mc_diag.py" init-case -o case.md
+          python "$skill_dir/mc_diag.py" bundle --no-local-snapshot --case "$skill_dir/examples/case.md" --prefill-log "$skill_dir/examples/prefill.txt" --decode-log "$skill_dir/examples/decode.txt" -o demo.tar.gz
+          tar -tzf demo.tar.gz

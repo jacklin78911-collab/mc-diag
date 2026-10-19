@@ -1,0 +1,4 @@
+interface:
+  display_name: "Mooncake 故障上下文"
+  short_description: "整理 Mooncake P/D 故障材料、脱敏打包并按原始行号核对证据"
+  default_prompt: "用 $mc-diag 整理这次 Mooncake／vLLM P/D 故障：记录背景和已做排查，处理已有材料，核对关联证据并列出材料缺口。"
