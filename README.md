@@ -1,6 +1,8 @@
 # mc_diag
 
-把 Mooncake／vLLM MooncakeConnector 的故障说明、两端日志、环境和排查记录，整理成能直接交给 AI 或接手同事的上下文包。当前版本 **0.2.4**，内部工具，独立维护。两条旧版规则与版本说明补齐后冻结，不再增加功能。
+> 新版已整理为 Mooncake 仓库内的工具，见 [集成 PR #4841](https://github.com/kvcache-ai/Mooncake/pull/4841)（草稿，尚未合入）。当前可用的分支与完整用法见 [Mooncake 诊断工具](https://github.com/jacklin78911-collab/Mooncake/tree/codex/mc-diag-zip-integration/scripts/diagnostics)。新版无需安装 skill，输出一个 ZIP，并提示携带 ZIP 提 issue 或咨询 AI；同时修复重复包元数据导致的版本误报和路径中用户名漏脱敏。
+
+本仓库保留 **0.2.4 历史冻结版**，下面是该版本的使用说明。它把 Mooncake／vLLM MooncakeConnector 的故障说明、两端日志、环境和排查记录整理成交接包，仍使用 tar.gz。新开发在上述 Mooncake 集成分支进行。
 
 **Python 3.9+，只用标准库，无需安装依赖。** 环境快照在服务所在的 Linux 上采集；打包机器不需要 GPU、Mooncake 或 vLLM。工具不自动调用 AI 或上传数据。
 
