@@ -1,6 +1,6 @@
 # mc_diag
 
-> 新版已整理为 Mooncake 仓库内的工具，见 [集成 PR #4841](https://github.com/kvcache-ai/Mooncake/pull/4841)（草稿，尚未合入）。当前可用的分支与完整用法见 [Mooncake 诊断工具](https://github.com/jacklin78911-collab/Mooncake/tree/codex/mc-diag-zip-integration/scripts/diagnostics)。新版无需安装 skill，输出一个 ZIP，并提示携带 ZIP 提 issue 或咨询 AI；同时修复重复包元数据导致的版本误报和路径中用户名漏脱敏。
+> 新版已整理为 Mooncake 仓库内的工具，见 [集成 PR #4841](https://github.com/kvcache-ai/Mooncake/pull/4841)（已转为非草稿，待审核、尚未合入）。当前可用的分支与完整用法见 [Mooncake 诊断工具](https://github.com/jacklin78911-collab/Mooncake/tree/codex/mc-diag-zip-integration/scripts/diagnostics)。新版无需安装 skill，输出一个 ZIP，并提示携带 ZIP 提 issue 或咨询 AI；同时修复重复包元数据导致的版本误报和路径中用户名漏脱敏。
 
 本仓库保留 **0.2.4 历史冻结版**，下面是该版本的使用说明。它把 Mooncake／vLLM MooncakeConnector 的故障说明、两端日志、环境和排查记录整理成交接包，仍使用 tar.gz。新开发在上述 Mooncake 集成分支进行。
 
